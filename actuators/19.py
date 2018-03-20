@@ -1,0 +1,30 @@
+#-------------------------
+# actuators (c) 2017-2018 Micah Bushouse
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-------------------------
+
+import pyvmi
+
+
+# vmi = pyvmi object
+# cfg is a dictionary of OS offsets (this will need to be supplied)
+# ts_addr is the base address of an in-memory task_struct object
+def get_uid(vmi, cfg, ts_addr):
+    try:
+        cred_ptr = vmi.read_addr_va(ts_addr + cfg['u_cred'], 0)
+        uid = vmi.read_32_va(cred_ptr + cfg['u_uid'], 0)
+    except ValueError:
+        uid = -1
+    return uid
